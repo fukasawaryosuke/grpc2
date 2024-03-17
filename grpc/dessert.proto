@@ -1,0 +1,27 @@
+// バージョンの指定が必要、指定がなければデフォルトで2になる
+syntax = "proto3";
+
+// パッケージの宣言
+package grpcApi;
+
+// 自動生成した際に出力されるディレクトリを指定
+option go_package = "pkg/grpc";
+
+// リクエストの定義
+message DessertRequest {
+  // データ型 フィールド名 = フィールド番号
+  string name = 1;
+  int32 id = 2;
+}
+
+// レスポンスの定義
+message DessertResponse {
+  string name = 1;
+  string description = 2;
+}
+
+// サービスの定義
+service DessertService {
+  // stream型を指定することでストリーミングでデータを送受信できる
+  rpc GetDessertStream(DessertRequest) returns (stream DessertResponse);
+}
