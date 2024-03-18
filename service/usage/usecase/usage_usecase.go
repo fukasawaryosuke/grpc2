@@ -28,10 +28,13 @@ func (uu *usageUsecase) GetDessertStream() {
 	startTime := time.Now() // 関数実行開始時刻を記録
 
 	fmt.Printf("---- Start GetDessertStream ----\n\n")
-    port := "localhost:10001"
+	  port := "localhost:10001"
+	  // gRPCサーバのコネクション
     conn, err := grpc.Dial(
     	port,
+			// コネクションでSSL/TLSを使用しない
     	grpc.WithTransportCredentials(insecure.NewCredentials()),
+			// コネクションが確立されるまで待機する(同期処理をする)
     	grpc.WithBlock(),
     )
 	if err != nil {
@@ -39,6 +42,7 @@ func (uu *usageUsecase) GetDessertStream() {
 	}
 	defer conn.Close()
 
+	// コネクションを使って、gRPCのサービスのクライアントを受け取る
 	client := pb.NewDessertServiceClient(conn)
 
 	// 使用したいストリームを取得しておく
@@ -68,6 +72,7 @@ func (uu *usageUsecase) GetDessertStream() {
 	}()
 
 	// デザートデータの受信
+	// gRPCの処理側でSend()されたデータをここで受け取る。（デザートのデータを10回受け取る）
 	wg.Add(1)
 	go func() {
 		defer wg.Done()

@@ -16,6 +16,7 @@ type DessertStreamServer struct {
 func NewServer() *grpc.Server {
 	s := grpc.NewServer()
 
+	// gRPCサーバーにDessertStreamServerを登録。
 	pb.RegisterDessertServiceServer(s, &DessertStreamServer{})
 	return s
 }
@@ -27,6 +28,8 @@ func (s *DessertStreamServer) GetDessertStream(req *pb.DessertRequest, stream pb
 	for _, dessertName := range desserts {
 		time.Sleep(500 * time.Millisecond)
 
+		// gRPCのストリームを介してクライアントにデータを送信
+		// stream.Sendを使うことで呼び出し元の関数にデータを送信することができる
 		err := stream.Send(&pb.DessertResponse{
 			Description: "美味しい" + dessertName + "です",
 			Name:        dessertName,
